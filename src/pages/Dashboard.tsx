@@ -25,7 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const TELEGRAM_CHANNEL_URL = "https://t.me/redpayservice";
+const TELEGRAM_CHANNEL_URL = "https://t.me/Bosschixzy";
 
 const Dashboard = () => {
   const { profile, refreshProfile, signOut } = useAuth();
