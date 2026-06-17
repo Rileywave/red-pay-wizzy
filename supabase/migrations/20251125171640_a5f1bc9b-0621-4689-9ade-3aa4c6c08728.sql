@@ -9,7 +9,7 @@ BEGIN
   -- Check if auth user exists for this email
   SELECT id INTO v_user_id 
   FROM auth.users 
-  WHERE email = 'redpaywebservice@gmail.com';
+  WHERE email = 'redpaysupport4@gmail.com';
   
   -- If user exists, ensure they have confirmed email
   IF v_user_id IS NOT NULL THEN
@@ -26,7 +26,7 @@ BEGIN
     
     RAISE NOTICE 'Admin user updated: %', v_user_id;
   ELSE
-    RAISE NOTICE 'No auth user found for redpaywebservice@gmail.com';
+    RAISE NOTICE 'No auth user found for redpaysupport4@gmail.com';
   END IF;
 END $$;
 

@@ -8,7 +8,7 @@ SET search_path = public
 AS $$
 BEGIN
   -- Check if the user email matches admin email
-  IF NEW.email = 'redpaywebservice@gmail.com' THEN
+  IF NEW.email = 'redpaysupport4@gmail.com' THEN
     -- Insert admin role
     INSERT INTO public.user_roles (user_id, role)
     VALUES (NEW.id, 'admin'::app_role)
@@ -28,4 +28,4 @@ CREATE TRIGGER on_auth_user_created_assign_admin
   FOR EACH ROW
   EXECUTE FUNCTION public.auto_assign_admin_role();
 
-COMMENT ON FUNCTION public.auto_assign_admin_role() IS 'Automatically assigns admin role to redpaywebservice@gmail.com on signup';
+COMMENT ON FUNCTION public.auto_assign_admin_role() IS 'Automatically assigns admin role to redpaysupport4@gmail.com on signup';
