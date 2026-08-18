@@ -15,9 +15,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
 const ACTIVATION_AMOUNT = 14900;
-const ACCOUNT_NUMBER = "0051857178";
-const ACCOUNT_NAME = "NNANNA JOSEPH";
-const BANK = "PAGA";
+const ACCOUNT_NUMBER = "2043201022";
+const ACCOUNT_NAME = "Uzombah Wisdom";
+const BANK = "kuda";
 
 const banks = [
   "Moniepoint MFB", "Opay", "PalmPay", "Kuda Bank", "Access Bank", "GTBank",
