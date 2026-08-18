@@ -1,0 +1,12 @@
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.users TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.transactions TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.referrals TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.rpc_purchases TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.activation_requests TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.withdrawal_requests TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.push_subscriptions TO authenticated;
+GRANT SELECT ON public.push_notifications TO authenticated;
+GRANT SELECT ON public.settings TO authenticated;
+GRANT SELECT, INSERT ON public.audit_logs TO authenticated;
+GRANT SELECT ON public.user_roles TO authenticated;
+GRANT ALL ON public.users, public.transactions, public.referrals, public.rpc_purchases, public.activation_requests, public.withdrawal_requests, public.push_subscriptions, public.push_notifications, public.settings, public.audit_logs, public.user_roles TO service_role;
