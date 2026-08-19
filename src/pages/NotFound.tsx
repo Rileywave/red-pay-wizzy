@@ -50,7 +50,7 @@ const PendingPage = () => {
 
         <div className="flex flex-col gap-3">
           <a
-            href="https://t.me/Redpaywebsupport"
+            href="https://t.me/Helpredpaysupport"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block w-full rounded-md bg-primary px-4 py-2 text-white font-medium hover:bg-primary/90"
