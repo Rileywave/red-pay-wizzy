@@ -10,12 +10,17 @@ import ProfileButton from "@/components/ProfileButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Copy, Check, Upload, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+
 
 // 6 minutes
 const SIX_MINUTES = 6 * 60;
 
 const PaymentInstructions = () => {
   const navigate = useNavigate();
+  const { user, profile } = useAuth();
+
 
   const [copied, setCopied] = useState("");
   const [screenshot, setScreenshot] = useState<File | null>(null);
@@ -103,12 +108,46 @@ const PaymentInstructions = () => {
       toast.error("Please upload payment screenshot");
       return;
     }
+    if (!user || !profile) {
+      toast.error("Please log in to continue");
+      return;
+    }
 
     setLoading(true);
-    await new Promise(r => setTimeout(r, 2000));
+
+    let proofPath: string | null = null;
+    try {
+      const ext = screenshot.name.split(".").pop();
+      const path = `${user.id}/rpc-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("payment-proofs")
+        .upload(path, screenshot);
+      if (upErr) throw upErr;
+      proofPath = path;
+    } catch {
+      // proof upload is best-effort; the purchase still reaches the admin queue
+    }
+
+    const { error } = await supabase.from("rpc_purchases").insert({
+      user_id: profile.user_id,
+      user_name: `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim(),
+      email: profile.email,
+      phone: profile.phone,
+      user_unique_id: profile.user_id,
+      proof_image: proofPath,
+    } as any);
+
     setLoading(false);
+
+    if (error) {
+      toast.error("Could not submit your payment. Please try again.");
+      return;
+    }
+
+    toast.success("Payment submitted — awaiting admin verification.");
     setShowPending(true);
   };
+
 
   /* =======================
      PENDING SCREEN

@@ -34,7 +34,7 @@ const withdrawSchema = z.object({
 
 const Withdraw = () => {
   const navigate = useNavigate();
-  const { profile, user } = useAuth();
+  const { profile, user, loading: authLoading, refreshProfile } = useAuth();
   const [formData, setFormData] = useState({
     accountNumber: "",
     accountName: "",
@@ -63,13 +63,6 @@ const Withdraw = () => {
       return;
     }
 
-    // Account activation (₦14,900) must be confirmed by an admin before withdrawing
-    if (!profile.activated) {
-      toast.error("Your account is not activated yet. Complete activation to withdraw.");
-      navigate("/activate");
-      return;
-    }
-
     // Validate form data with Zod
     const validation = withdrawSchema.safeParse(formData);
     if (!validation.success) {
@@ -93,7 +86,7 @@ const Withdraw = () => {
       return;
     }
 
-    // Activation is confirmed — log the request so admins can process the payout manually
+    // Log the request so admins can process the payout manually
     setLoading(true);
     const { error } = await supabase.from("withdrawal_requests" as any).insert({
       user_id: user?.id,
@@ -113,8 +106,25 @@ const Withdraw = () => {
       return;
     }
 
-    toast.success("Activation confirmed. Your withdrawal request was submitted — contact support to complete it.");
-    navigate("/support");
+    // Debit the wallet and record the transaction
+    const balanceBefore = profile.balance || 0;
+    const balanceAfter = balanceBefore - withdrawAmount;
+
+    await supabase.from("users").update({ balance: balanceAfter }).eq("user_id", profile.user_id);
+    await supabase.from("transactions").insert({
+      transaction_id: `WD-${Date.now()}`,
+      user_id: profile.user_id,
+      type: "debit",
+      title: "Withdrawal Request",
+      amount: withdrawAmount,
+      balance_before: balanceBefore,
+      balance_after: balanceAfter,
+      meta: { bank: formData.bank, account_number: formData.accountNumber },
+    } as any);
+
+    await refreshProfile();
+
+    navigate(`/success?type=withdraw&amount=${withdrawAmount.toLocaleString()}`);
   };
 
 
@@ -132,9 +142,23 @@ const Withdraw = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen w-full relative flex items-center justify-center">
+      <div className="min-h-screen w-full relative flex items-center justify-center px-4">
         <LiquidBackground />
-        <div className="relative z-10 text-foreground">Loading...</div>
+        <div className="relative z-10 text-center space-y-4">
+          {authLoading ? (
+            <LoadingSpinner message="Loading your account" />
+          ) : !user ? (
+            <>
+              <p className="text-foreground">Please log in to withdraw.</p>
+              <Button onClick={() => navigate("/auth")}>Log in</Button>
+            </>
+          ) : (
+            <>
+              <p className="text-foreground">We couldn't load your profile.</p>
+              <Button onClick={() => window.location.reload()}>Retry</Button>
+            </>
+          )}
+        </div>
       </div>
     );
   }
@@ -161,6 +185,23 @@ const Withdraw = () => {
               <p className="text-xs text-muted-foreground">Available Balance</p>
               <p className="text-2xl font-bold text-primary">₦{(profile?.balance || 0).toLocaleString()}</p>
             </div>
+
+            {/* Issued RPC code — shown after admin approval */}
+            {profile?.rpc_purchased && profile?.rpc_code && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs text-muted-foreground">Your RPC Code</p>
+                  <p className="text-base font-bold font-mono text-primary tracking-wider">{profile.rpc_code}</p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setFormData({ ...formData, accessCode: profile.rpc_code!.toUpperCase() })}
+                >
+                  Use code
+                </Button>
+              </div>
+            )}
 
             <div className="space-y-3">
               {/* User ID (Fixed) */}
@@ -248,14 +289,13 @@ const Withdraw = () => {
 
             <div className="rounded-lg border border-primary/20 bg-primary/10 p-3">
               <p className="text-xs text-muted-foreground">
-                Once your activation is confirmed, withdrawals are completed manually by our support team.
-                Submit this form, then contact support with your details to receive your payout.
+                Activate account- Buy Rpc code to withdraw.
               </p>
             </div>
 
             <Button onClick={handleWithdraw} className="w-full" size="lg">
               <DollarSign className="w-4 h-4 mr-2" />
-              Continue to Support
+              Withdraw Funds
             </Button>
 
           </CardContent>

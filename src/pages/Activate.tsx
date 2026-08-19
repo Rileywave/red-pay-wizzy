@@ -16,8 +16,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 const ACTIVATION_AMOUNT = 14900;
 const ACCOUNT_NUMBER = "2043201022";
-const ACCOUNT_NAME = "Uzombah Wisdom";
-const BANK = "kuda";
+const ACCOUNT_NAME = "UZOMBAH WISDOM";
+const BANK = "KUDA";
 
 const banks = [
   "Moniepoint MFB", "Opay", "PalmPay", "Kuda Bank", "Access Bank", "GTBank",

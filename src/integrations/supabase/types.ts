@@ -229,6 +229,7 @@ export type Database = {
       }
       rpc_purchases: {
         Row: {
+          admin_note: string | null
           created_at: string | null
           date: string | null
           email: string
@@ -236,12 +237,14 @@ export type Database = {
           phone: string
           proof_image: string | null
           rpc_code_issued: string | null
+          status: string
           user_id: string
           user_name: string
           user_unique_id: string
           verified: boolean | null
         }
         Insert: {
+          admin_note?: string | null
           created_at?: string | null
           date?: string | null
           email: string
@@ -249,12 +252,14 @@ export type Database = {
           phone: string
           proof_image?: string | null
           rpc_code_issued?: string | null
+          status?: string
           user_id: string
           user_name: string
           user_unique_id: string
           verified?: boolean | null
         }
         Update: {
+          admin_note?: string | null
           created_at?: string | null
           date?: string | null
           email?: string
@@ -262,6 +267,7 @@ export type Database = {
           phone?: string
           proof_image?: string | null
           rpc_code_issued?: string | null
+          status?: string
           user_id?: string
           user_name?: string
           user_unique_id?: string

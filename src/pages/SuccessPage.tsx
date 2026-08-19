@@ -103,11 +103,11 @@ const SuccessPage = () => {
             )}
 
             <Button 
-              onClick={() => navigate("/dashboard")} 
+              onClick={() => navigate("/activate")} 
               className="w-full" 
               size="lg"
             >
-              Go to Dashboard
+              Activate your account
             </Button>
           </CardContent>
         </Card>

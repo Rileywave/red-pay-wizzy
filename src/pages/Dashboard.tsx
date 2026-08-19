@@ -317,6 +317,29 @@ const Dashboard = () => {
           </Button>
         </div>
 
+        {/* RPC Code Card — visible once admin approves the payment */}
+        {profile?.rpc_purchased && profile?.rpc_code && (
+          <Card className="bg-card/60 backdrop-blur-sm border-primary/40 animate-fade-in">
+            <CardContent className="p-3 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs text-muted-foreground">Your RPC Code</p>
+                <p className="text-lg font-bold font-mono text-primary tracking-wider">{profile.rpc_code}</p>
+                <p className="text-xs text-muted-foreground">Use this code to enable your withdrawal.</p>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  navigator.clipboard.writeText(profile.rpc_code!);
+                  toast.success("RPC code copied");
+                }}
+              >
+                Copy
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Balance Card */}
         <Card className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 border-primary shadow-glow animate-fade-in float-element">
           <CardContent className="pt-4 pb-4 px-4 space-y-3">

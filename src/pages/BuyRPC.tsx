@@ -36,7 +36,12 @@ const BuyRPC = () => {
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
 
   const navigate = useNavigate();
-  const [userId] = useState(localStorage.getItem("userId") || "1234567890");
+  const [userId, setUserId] = useState("1234567890");
+
+  useEffect(() => {
+    const storedId = localStorage.getItem("userId");
+    if (storedId) setUserId(storedId);
+  }, []);
 
   const copyReferralCode = () => {
     if (profile?.referral_code) {
@@ -136,6 +141,25 @@ const BuyRPC = () => {
               <p className="text-2xl font-bold text-primary">₦6,700</p>
             </div>
 
+            {profile?.rpc_purchased && profile?.rpc_code && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs text-muted-foreground">Your RPC Code</p>
+                  <p className="text-base font-bold font-mono text-primary tracking-wider">{profile.rpc_code}</p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(profile.rpc_code!.toUpperCase());
+                    toast.success("RPC code copied!");
+                  }}
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+
             {profile?.referral_code && (
               <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
                 <p className="text-xs text-muted-foreground mb-2">Your Referral Code</p>
@@ -157,6 +181,8 @@ const BuyRPC = () => {
                 </p>
               </div>
             )}
+
+
 
             <div className="space-y-3">
               <div className="space-y-1">
